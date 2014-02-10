@@ -1,0 +1,20 @@
+---
+id: setup_farm
+type: task
+name: Setup farm build environment
+
+vars:
+  templates: /opt/build_env/templates
+  precise: /opt/build_env/templates/precise_chroot
+  saucy: /opt/build_env/templates/saucy_chroot
+  raring: /opt/build_env/templates/raring_chroot
+
+do:
+  - sudo mkdir -p {{ templates }}
+    on: [farm]
+  - if [ ! -d {{ precise }} ]; then sudo debootstrap precise {{ precise }}; fi
+    on: [farm]
+  - if [ ! -d {{ saucy }} ]; then sudo debootstrap saucy {{ saucy }}; fi
+    on: [farm]
+  - if [ ! -d {{ raring }} ]; then sudo debootstrap raring {{ raring }}; fi
+    on: [farm]
