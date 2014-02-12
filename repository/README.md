@@ -13,7 +13,7 @@ ssh repo_server
 sudo useradd -m -s /bin/bash debrepo
 
 # This should already be installed if using the devo.ps recipe...
-apt-get install dpkg-sig reprepro
+apt-get install dpkg-sig reprepro gnupg gnupg-agent
 ```
 
 ### Prepare GPG key
@@ -140,6 +140,9 @@ How to sign and add the packages:
 # Get as debrepo
 sudo su - debrepo
 
+# To avoid having to enter the passphrase 1 million times, you can use gpg-agent
+eval $(gpg-agent --daemon)
+
 # Get the key ID from the GPG KEY
 KEY_ID=$(gpg --list-keys wiredcraft | grep sub | awk '{print $2}' | cut -f2 -d'/')
 
@@ -162,4 +165,7 @@ Finally add the package to the correct repo:
 
 ```bash
 reprepro includedeb <osrelease> <debfile>
+
+# ex. for files being in the deb folder - for saucy osrelease, with deb files having a '+saucy' package tag
+# reprepro includedeb saucy incoming/*+saucy*deb
 ```
