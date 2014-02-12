@@ -3,7 +3,8 @@
 Links:
 - https://wiki.debian.org/SettingUpSignedAptRepositoryWithReprepro
 
-## Prepare APT repo owner on remote box
+## Setup
+### Prepare APT repo owner on remote box
 
 You do not want the regular user to be in charge of the repo, not do you want root
 
@@ -11,9 +12,11 @@ You do not want the regular user to be in charge of the repo, not do you want ro
 ssh repo_server
 sudo useradd -m -s /bin/bash debrepo
 
+# This should already be installed if using the devo.ps recipe...
+apt-get install dpkg-sig reprepro
 ```
 
-## Prepare GPG key
+### Prepare GPG key
 
 http://www.debuntu.org/how-to-importexport-gpg-key-pair/
 
@@ -54,7 +57,7 @@ gpg --allow-secret-key-import --import ~/wcl-deb_sec.gpg
 
 ```
 
-## Configure reprepo
+### Configure reprepo
 
 ```bash
 sudo mkdir -p /var/www/repos/apt/ubuntu/conf
@@ -102,7 +105,7 @@ sudo cp /home/debrepo/repo.devo.ps.gpg.key /var/www/repos/apt/ubuntu/
 
 ```
 
-## Nginx configuration
+### Nginx configuration
 
 ```bash
 apt-get install nginx
@@ -126,16 +129,37 @@ EOF
 service nginx restart
 ```
 
-## Short version
+## Package management
+
+
+
+
+How to sign and add the packages: 
 
 ```bash
-# This should already be installed if using the devo.ps recipe...
-apt-get install dpkg-sig reprepro
+# Get as debrepo
+sudo su - debrepo
+
+# Get the key ID from the GPG KEY
+KEY_ID=$(gpg --list-keys wiredcraft | grep sub | awk '{print $2}' | cut -f2 -d'/')
+
+# Sign the package (if required) - you may be required to enter the GPG passphrase
+dpkg-sig -k $KEY_ID --sign builder your_packages_<version>_<architecture>.deb
 ```
 
+Add any extra metadata in the `/var/www/repos/apt/ubuntu/conf/override.<osrelease>` (optional)
+Make sure you apply it to all the osreleases currently supported ...
 
-How to sign packages: 
+The format is the following: 
+
+```
+your_package_name Priority        optional
+your_package_name Section         net
+...
+```
+
+Finally add the package to the correct repo:
 
 ```bash
-dpkg-sig -k keyid --sign builder your_packages_<version>_<architecture>.deb
+reprepro includedeb <osrelease> <debfile>
 ```

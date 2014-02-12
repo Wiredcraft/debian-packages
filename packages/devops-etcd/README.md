@@ -54,4 +54,7 @@ dpkg-deb --build build/ devops-etcd_VERSION_amd64.deb
 
 ## Add package to .deb repository
 
-See ...
+Copy the generated file in repo.devo.ps in `/var/www/repos/apt/ubuntu/incoming` and change the ownership to `debrepo`.
+Then sign and add to the APT repo by following the details in `repository/README.md`
+
+etcd being a go based project, the binary is compatible on all versions of Ubuntu (and Linux in general). You can use the same package in all the distributions and simply need to add the package via `reprepro includedeb <osrelease> devops-etcd_VERSION_amd64.deb`.
