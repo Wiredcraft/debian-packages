@@ -22,7 +22,7 @@ USER=devops
 DAEMON=/opt/devops/bin/$BINARY
 DAEMON_ARGS=""
 SCRIPTNAME=/etc/init.d/$NAME
-CONFIG=/etc/$NAME.conf
+CONFIG_FILE=/etc/$NAME.conf
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
