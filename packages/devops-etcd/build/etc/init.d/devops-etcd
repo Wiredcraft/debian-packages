@@ -33,7 +33,7 @@ CONFIG=/etc/$NAME.conf
 [ ! -z "$DATADIR" ] && DAEMON_ARGS="$DAEMON_ARGS -d=$DATADIR"
 [ ! -z "$CLIENT_BIND" ] && DAEMON_ARGS="$DAEMON_ARGS -c=$CLIENT_BIND"
 [ ! -z "$SERVER_BIND" ] && DAEMON_ARGS="$DAEMON_ARGS -s=$SERVER_BIND"
-[ -e "$CONFIG_FILE ] && DAEMON_ARGS="$DAEMON_ARGS -config $CONFIG_FILE"
+[ -e "$CONFIG_FILE" ] && DAEMON_ARGS="$DAEMON_ARGS -config $CONFIG_FILE"
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
