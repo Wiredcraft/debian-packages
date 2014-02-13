@@ -30,11 +30,11 @@ read confirm
 if [ -z "$confirm" -o "$confirm" == 'y' -o "$confirm" == 'Y' ]; then
     echo "Setting up proper version in the control file"
     sed -i "s/^Version: /Version: $version/" build/DEBIAN/control
-    dpkg-deb --build build/ devops-etcd_$version_amd64.deb
+    dpkg-deb --build build/ devops-etcd_"$version"_amd64.deb
     if [ $? -eq 0 ]; then
-        echo "Success - the deb package is available at ./devops-etcd_$version_amd64.deb"
-        sudo cp devops-etcd_$version_amd64.deb $INCOMING
-        sudo chown debrepo. $INCOMING/devops-etcd_$version_amd64.deb
+        echo "Success - the deb package is available at ./devops-etcd_${version}_amd64.deb"
+        sudo cp devops-etcd_"$version"_amd64.deb $INCOMING
+        sudo chown debrepo. $INCOMING/devops-etcd_"$version"_amd64.deb
         echo "The package has been copied to the deb repo incoming folder, you can proceed to its addition."
     else
         echo "Error while building the package."
