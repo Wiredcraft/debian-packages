@@ -1,12 +1,19 @@
 #!/bin/sh
-set -e
-# Automatically added by dh_installdocs
-if [ "$1" = "configure" ]; then
+
+# set -e
+
+Automatically added by dh_installdocs
+if [ "$1" == "configure" ]; then
   if [ -d /usr/doc -a ! -e /usr/doc/devops-etcd -a -d /usr/share/doc/devops-etcd ]; then
     ln -sf ../share/doc/devops-etcd /usr/doc/devops-etcd
   fi
 fi
+
+# Ensure the default datadir
+mkdir -p /opt/devops/var/etcd
+
 # Set proper permissions for the /opt/devops/var folder
+# WARNING !! the configure step will fail if there is no `devops` user
 EXIST=`grep -Ec '^devops:' /etc/passwd`
 if [ $EXIST -eq 1 ]; then
   chown -R devops. /opt/devops/var

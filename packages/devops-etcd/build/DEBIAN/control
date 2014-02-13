@@ -3,6 +3,5 @@ Version: REPLACE
 Section: base
 Priority: optional
 Architecture: amd64
-Depends:
-Maintainer: Vincent Viallet <vincent@devo.ps>
+Maintainer: Wiredcraft <debbot@wiredcraft.com>
 Description: etcd for devo.ps

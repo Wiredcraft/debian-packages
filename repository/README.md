@@ -88,7 +88,7 @@ EOF
 
     # Prepare the source.list.d files
     cat > /var/www/repos/apt/ubuntu/repo_devo_ps_$osrelease.list << EOF
-deb [amd64] http://repo.devo.ps/ubuntu $osrelease main
+deb [arch=amd64] http://repo.devo.ps/ubuntu $osrelease main
 EOF
 
 done
