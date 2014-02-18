@@ -1,1 +1,40 @@
-mongooseim
+#!/bin/bash
+# mongooseim daemon
+# chkconfig: 345 20 80
+# description: mongooseim daemon
+# processname: mongooseim
+
+NAME=mongooseim
+DESC="Mongooseim server"
+#PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+USER=wiredcraft
+# export HOME=/home/${USER}
+DAEMON_PATH="/opt/mongooseim"
+DAEMON="bin/ejabberd"
+DAEMONOPTS=""
+
+# Load defaults and overidde stuff
+if [ -f /etc/default/$NAME ]; then 
+    source /etc/default/$NAME
+fi
+
+case "$1" in
+start)
+    printf "%-50s" "Starting $NAME..."
+    bash -c "$DAEMON_PATH/$DAEMON start" - $USER
+    ;;
+stop)
+    printf "%-50s" "Stopping $NAME"
+    bash -c "$DAEMON_PATH/$DAEMON stop" - $USER
+    ;;
+restart)
+    $0 stop
+    $0 start
+;;
+
+*)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac

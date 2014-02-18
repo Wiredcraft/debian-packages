@@ -1,4 +1,4 @@
-Package: mongooseim-octochat
+Package: mongooseim
 Version: VERSION
 Section: base
 Priority: optional
