@@ -32,6 +32,9 @@ sudo mkdir -p build/opt/mongooseim/share/
 if [ -f build/opt/mongooseim/bin/ejabberd -a ! -f build/opt/mongooseim/share/ejabberd ]; then
     sudo mv build/opt/mongooseim/bin/ejabberd build/opt/mongooseim/share/ejabberd
 fi
+if [ -f build/opt/mongooseim/etc/vm.args -a ! -f build/opt/mongooseim/share/vm.args ]; then
+    sudo mv build/opt/mongooseim/etc/vm.args build/opt/mongooseim/share/vm.args
+fi
 
 echo -n "Proceed with the package build? [Y/n] "
 read confirm
