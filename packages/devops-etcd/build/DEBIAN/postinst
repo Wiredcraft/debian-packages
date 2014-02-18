@@ -2,7 +2,7 @@
 
 # set -e
 
-Automatically added by dh_installdocs
+# Automatically added by dh_installdocs
 if [ "$1" == "configure" ]; then
   if [ -d /usr/doc -a ! -e /usr/doc/devops-etcd -a -d /usr/share/doc/devops-etcd ]; then
     ln -sf ../share/doc/devops-etcd /usr/doc/devops-etcd
