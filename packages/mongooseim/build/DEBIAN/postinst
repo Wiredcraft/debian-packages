@@ -7,7 +7,10 @@ set -e
 
 BIN_SOURCE=/opt/mongooseim/share/ejabberd
 BIN_TARGET=/opt/mongooseim/bin/ejabberd
+VM_SOURCE=/opt/mongooseim/share/vm.args
+VM_TARGET=/opt/mongooseim/etc/vm.args
 CONFIG_TARGET=/opt/mongooseim/etc/ejabberd.cfg
+
 TEMPFILE=$(mktemp)
 
 . /usr/share/debconf/confmodule
@@ -29,10 +32,10 @@ setup_mongooseim()
     fi
 
     # Ejabberd logs should be readable by users in adm group (see also logrotate script).
-    install -d /opt/mongooseim/var/log
-    if ! dpkg-statoverride --list /opt/mongooseim/var/log >/dev/null; then
-    chown mongooseim:adm /opt/mongooseim/var/log
-    chmod 2750 /opt/mongooseim/var/log
+    install -d /opt/mongooseim/log
+    if ! dpkg-statoverride --list /opt/mongooseim/log >/dev/null; then
+    chown mongooseim:adm /opt/mongooseim/log
+    chmod 2750 /opt/mongooseim/log
     # if dpkg --compare-versions "$2" lt '2.1.4'; then
     #     find /var/log/ejabberd -type f -name '*.log*' \
     #     | while read f; do
@@ -80,6 +83,12 @@ setup_mongooseim()
     sed -e 's/RUNNER_USER=$/RUNNER_USER=mongooseim\nexport HOME=\/opt\/mongooseim\/var\/lib\n/g' $BIN_SOURCE > $TEMPFILE
     ucf --three-way --debconf-ok $TEMPFILE $BIN_TARGET
     chmod 755 $BIN_TARGET
+
+    cp $VM_SOURCE $TEMPFILE
+    printf "\n# Set proper mnesia dir\n-mnesia dir '\"/opt/mongooseim/var/lib\"'\n" >> $TEMPFILE
+    ucf --three-way --debconf-ok $TEMPFILE $VM_TARGET
+    chown mongooseim:mongooseim $VM_TARGET
+    chmod 600 $VM_TARGET
 
     # Making ejabberd config readable only by ejabberd user.
     chown mongooseim:mongooseim $CONFIG_TARGET

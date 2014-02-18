@@ -1,8 +1,61 @@
-#!/bin/sh
-set -e
-# Automatically added by dh_installdocs
-if [ \( "$1" = "upgrade" -o "$1" = "remove" \) -a -L /usr/doc/mongooseim ]; then
-  rm -f /usr/doc/mongooseim
-fi
-# End automatically added section
+#! /bin/sh
+# prerm script for mongooseim
+#
+# see: dh_installdeb(1)
 
+set -e
+
+# summary of how this script can be called:
+#        * <prerm> `remove'
+#        * <old-prerm> `upgrade' <new-version>
+#        * <new-prerm> `failed-upgrade' <old-version>
+#        * <conflictor's-prerm> `remove' `in-favour' <package> <new-version>
+#        * <deconfigured's-prerm> `deconfigure' `in-favour'
+#          <package-being-installed> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see /usr/doc/packaging-manual/
+
+ctl() {
+    local cmd='/opt/mongooseim/bin/ejabberdctl'
+    for arg in "$@"; do
+        cmd="$cmd '$arg'"
+    done
+    su mongooseim -c "$cmd"
+}
+
+case "$1" in
+    remove|upgrade)
+    if ctl status >/dev/null ; then
+        # Use timestamp to make database restoring easier
+        TIME=$(date +%Y-%m-%dT%H:%M:%S)
+        BACKUPDIR=$(mktemp -d -p /var/backups/ mongooseim-$TIME.XXXXXX)
+        chown mongooseim:mongooseim $BACKUPDIR
+        BACKUP=$BACKUPDIR/mongooseim-database
+        ctl backup $BACKUP
+        # Change ownership to root:root because mongooseim user might be
+        # removed on package removal.
+        chown -R root:root $BACKUPDIR
+        chmod 700 $BACKUPDIR
+        echo
+        echo The mongooseim database has been backed up to $BACKUP.
+        echo
+    fi
+    # Remove PIPE dir
+    rm -rf /tmp/opt/mongooseim/
+    ;;
+
+    deconfigure)
+    ;;
+
+    failed-upgrade)
+    ;;
+
+    *)
+    echo "prerm called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
