@@ -1,13 +1,15 @@
 #!/bin/sh
 
-# set -e
+set -e
 
 # Automatically added by dh_installdocs
-if [ "$1" == "configure" ]; then
-  if [ -d /usr/doc -a ! -e /usr/doc/devops-etcd -a -d /usr/share/doc/devops-etcd ]; then
-    ln -sf ../share/doc/devops-etcd /usr/doc/devops-etcd
-  fi
-fi
+case "$1" in
+    configure)
+        if [ -d /usr/doc -a ! -e /usr/doc/devops-etcd -a -d /usr/share/doc/devops-etcd ]; then
+            ln -sf ../share/doc/devops-etcd /usr/doc/devops-etcd
+        fi
+    ;;
+esac
 
 # Ensure the default datadir
 mkdir -p /opt/devops/var/etcd

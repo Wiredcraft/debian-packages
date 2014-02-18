@@ -1,10 +1,11 @@
 #!/bin/sh
 
-# set -e
+set -e
 
-# Automatically added by dh_installdocs
-if [ "$1" == "configure" ]; then
-  if [ -d /usr/doc -a ! -e /usr/doc/mongooseim -a -d /usr/share/doc/mongooseim ]; then
-    ln -sf ../share/doc/mongooseim /usr/doc/mongooseim
-  fi
-fi
+case "$1" in
+    configure)
+        if [ -d /usr/doc -a ! -e /usr/doc/mongooseim -a -d /usr/share/doc/mongooseim ]; then
+            ln -sf ../share/doc/mongooseim /usr/doc/mongooseim
+        fi
+    ;;
+esac
