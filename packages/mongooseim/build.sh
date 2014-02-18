@@ -24,6 +24,8 @@ fi
 
 echo "Setting up proper permissions for the files"
 sudo chown root:root build/opt/mongooseim
+sudo chown -R root:root build/etc
+sudo chmod +x build/etc/init.d/mongooseim
 
 echo -n "Proceed with the package build? [Y/n] "
 read confirm
