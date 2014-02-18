@@ -9,8 +9,6 @@ DESC="Mongooseim server"
 #PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
-USER=wiredcraft
-# export HOME=/home/${USER}
 DAEMON_PATH="/opt/mongooseim"
 DAEMON="bin/ejabberd"
 DAEMONOPTS=""

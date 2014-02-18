@@ -5,9 +5,10 @@
 
 set -e
 
-# CONFIG_SOURCE=/usr/share/ejabberd/ejabberd.cfg
+BIN_SOURCE=/opt/mongooseim/share/ejabberd
+BIN_TARGET=/opt/mongooseim/bin/ejabberd
 CONFIG_TARGET=/opt/mongooseim/etc/ejabberd.cfg
-# TEMPFILE=$(mktemp)
+TEMPFILE=$(mktemp)
 
 . /usr/share/debconf/confmodule
 
@@ -74,6 +75,11 @@ setup_mongooseim()
     # sed -e "s/__USER__/$USER/g ; s/__HOSTNAME__/$HOST/g" $CONFIG_SOURCE >$TEMPFILE
     # ucf --three-way --debconf-ok $TEMPFILE $CONFIG_TARGET
     # db_stop
+
+    # Preparing the run user for the ejabberd bin
+    sed -e 's/RUNNER_USER=$/RUNNER_USER=mongooseim\nexport HOME=\/opt\/mongooseim\/var\/lib\n/g' $BIN_SOURCE > $TEMPFILE
+    ucf --three-way --debconf-ok $TEMPFILE $BIN_TARGET
+    chmod 755 $BIN_TARGET
 
     # Making ejabberd config readable only by ejabberd user.
     chown mongooseim:mongooseim $CONFIG_TARGET

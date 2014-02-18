@@ -27,6 +27,12 @@ sudo chown root:root build/opt/mongooseim
 sudo chown -R root:root build/etc
 sudo chmod +x build/etc/init.d/mongooseim
 
+echo "Prepare templates for the bin/ejabberd"
+mkdir -p build/opt/mongooseim/share/
+if [ -f build/opt/mongooseim/bin/ejabberd -a ! -f build/opt/mongooseim/share/ejabberd ]; then
+    mv build/opt/mongooseim/bin/ejabberd build/opt/mongooseim/share/ejabberd
+fi
+
 echo -n "Proceed with the package build? [Y/n] "
 read confirm
 
