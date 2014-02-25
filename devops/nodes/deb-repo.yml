@@ -1,0 +1,20 @@
+name: 'Apt repo Server'
+id: 'deb-repo'
+type: server
+
+configuration: 
+  server:
+    packages:
+      - reprepro
+      - dpkg-sig
+      - gnupg
+
+provider:
+  # This section describes the cloud provider details
+  image: 'ubuntu13.04'
+  name: 'digitalocean'
+  region: 3
+  size: 66
+
+services:
+  nginx: "*"

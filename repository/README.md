@@ -77,7 +77,7 @@ Label: Wiredcraft $osrelease Repository
 Codename: $osrelease
 Architectures: amd64
 Components: main
-Description: Apt repository for Wiredcraft and devo.ps projects
+Description: Apt repository for Wiredcraft
 DebOverride: override.$osrelease
 DscOverride: override.$osrelease
 SignWith: $KEY_ID
@@ -87,8 +87,8 @@ EOF
     touch /var/www/repos/apt/ubuntu/conf/override.$osrelease
 
     # Prepare the source.list.d files
-    cat > /var/www/repos/apt/ubuntu/repo_devo_ps_$osrelease.list << EOF
-deb [arch=amd64] http://repo.devo.ps/ubuntu $osrelease main
+    cat > /var/www/repos/apt/ubuntu/repo_wiredcraft_com_$osrelease.list << EOF
+deb [arch=amd64] http://repo.wiredcraft.com/ubuntu $osrelease main
 EOF
 
 done
@@ -100,8 +100,8 @@ ask-passphrase
 EOF
 
 # Prepare the key for the end user
-sudo -u debrepo -i bash -c 'gpg --armor --output /home/debrepo/repo.devo.ps.gpg.key --export $KEY_ID'
-sudo cp /home/debrepo/repo.devo.ps.gpg.key /var/www/repos/apt/ubuntu/
+sudo -u debrepo -i bash -c 'gpg --armor --output /home/debrepo/repo.wiredcraft.com.gpg.key --export $KEY_ID'
+sudo cp /home/debrepo/repo.wiredcraft.com.gpg.key /var/www/repos/apt/ubuntu/
 
 ```
 
@@ -112,7 +112,7 @@ apt-get install nginx
 
 cat > /etc/nginx/conf.d/debrepo.conf << EOF
 server {
-    server_name repo.devo.ps;
+    server_name repo.wiredcraft.com;
     listen 80;
 
     location / {
