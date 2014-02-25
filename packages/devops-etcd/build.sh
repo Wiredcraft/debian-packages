@@ -15,10 +15,7 @@ if [ "$confirm" != 'y' -a "$confirm" != 'Y' ]; then
 fi
 
 echo "Setting up proper permissions for the files"
-sudo chown root:root build/opt/devops/bin/*
-sudo mkdir -p build/opt/devops/var/etcd
-sudo chown root:root build/opt/devops/var/etcd
-sudo chown -R root:root build/etc
+sudo chown -R root:root build
 sudo chmod +x build/etc/init.d/devops-etcd
 
 echo "Fetching etcd version"
