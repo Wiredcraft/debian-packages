@@ -2,22 +2,37 @@
 
 set -e
 
-# Automatically added by dh_installdocs
+DEFAULT_SOURCE=/opt/devops/share/devops-etcd.tpl
+DEFAULT_TARGET=/etc/default/devops-etcd
+CONF_SOURCE=/opt/devops/share/devops-etcd.conf.tpl
+CONF_TARGET=/etc/devops-etcd.conf
+
+TEMPFILE=$(mktemp)
+
+. /usr/share/debconf/confmodule
+
+setup_etcd() {
+    # Preparing the /etc/default/devops-etcd file
+    sed -e "s/^# NODE_NAME=$/NODE_NAME=$(hostname)/g" $DEFAULT_SOURCE > $TEMPFILE
+    ucf --three-way --debconf-ok $TEMPFILE $DEFAULT_TARGET
+    chmod 644 $DEFAULT_TARGET
+
+    # Preparing the /etc/devops-etcd.conf file
+    sed -e "s/^# name = \"default-name\"$/name = \"$(hostname)\"/g" $CONF_SOURCE > $TEMPFILE
+    ucf --three-way --debconf-ok $TEMPFILE $CONF_TARGET
+    chmod 644 $CONF_TARGET
+
+    # Datadir
+    install -d /opt/devops/var/etcd
+    if ! dpkg-statoverride --list /opt/devops/var/etcd >/dev/null; then
+        chown -R devops:devops /opt/devops/var/etcd
+        chmod 700 /opt/devops/var/etcd
+    fi
+}
+
 case "$1" in
-    configure)
-        if [ -d /usr/doc -a ! -e /usr/doc/devops-etcd -a -d /usr/share/doc/devops-etcd ]; then
-            ln -sf ../share/doc/devops-etcd /usr/doc/devops-etcd
-        fi
+    configure|reconfigure)
+        adduser --quiet --shell /bin/bash --group --home /home/devops devops
+        setup_etcd
     ;;
 esac
-
-# Ensure the default datadir
-mkdir -p /opt/devops/var/etcd
-
-# Set proper permissions for the /opt/devops/var folder
-# WARNING !! the configure step will fail if there is no `devops` user
-EXIST=`grep -Ec '^devops:' /etc/passwd`
-if [ $EXIST -eq 1 ]; then
-  chown -R devops. /opt/devops/var
-fi
-# End automatically added section

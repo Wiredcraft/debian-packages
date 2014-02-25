@@ -1,8 +1,50 @@
-#!/bin/sh
-set -e
-# Automatically added by dh_installdocs
-if [ \( "$1" = "upgrade" -o "$1" = "remove" \) -a -L /usr/doc/devops-etcd ]; then
-  rm -f /usr/doc/devops-etcd
-fi
-# End automatically added section
+#! /bin/sh
+# prerm script for devops-etcd
+#
+# see: dh_installdeb(1)
 
+set -e
+
+# summary of how this script can be called:
+#        * <prerm> `remove'
+#        * <old-prerm> `upgrade' <new-version>
+#        * <new-prerm> `failed-upgrade' <old-version>
+#        * <conflictor's-prerm> `remove' `in-favour' <package> <new-version>
+#        * <deconfigured's-prerm> `deconfigure' `in-favour'
+#          <package-being-installed> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see /usr/doc/packaging-manual/
+
+case "$1" in
+    remove|upgrade)
+        # Use timestamp to make database restoring easier
+        TIME=$(date +%Y-%m-%dT%H:%M:%S)
+        BACKUPDIR=$(mktemp -d -p /var/backups/ devops-etcd-$TIME.XXXXXX)
+        chown devops:devops $BACKUPDIR
+        service devops-etcd stop
+        cp -a /opt/devops/var/etcd $BACKUPDIR
+        # Change ownership to root:root because mongooseim user might be
+        # removed on package removal.
+        chown -R root:root $BACKUPDIR
+        chmod 700 $BACKUPDIR
+        echo
+        echo The devops-etcd database has been backed up to $BACKUPDIR.
+        echo
+    fi
+    ;;
+
+    deconfigure)
+    ;;
+
+    failed-upgrade)
+    ;;
+
+    *)
+    echo "prerm called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
