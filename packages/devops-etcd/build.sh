@@ -26,7 +26,7 @@ read confirm
 
 if [ -z "$confirm" -o "$confirm" == 'y' -o "$confirm" == 'Y' ]; then
     echo "Setting up proper version in the control file"
-    sed -i "s/^Version: /Version: $version/" build/DEBIAN/control
+    sudo sed -i "s/^Version: /Version: $version/" build/DEBIAN/control
     dpkg-deb --build build/ devops-etcd_"$version"_amd64.deb
     if [ $? -eq 0 ]; then
         echo "Success - the deb package is available at ./devops-etcd_${version}_amd64.deb"
