@@ -2,6 +2,8 @@
 
 set -e
 
+USER=devops
+
 DEFAULT_SOURCE=/opt/devops/share/devops-etcd.tpl
 DEFAULT_TARGET=/etc/default/devops-etcd
 CONF_SOURCE=/opt/devops/share/devops-etcd.conf.tpl
@@ -13,7 +15,7 @@ TEMPFILE=$(mktemp)
 
 setup_etcd() {
     # Preparing the /etc/default/devops-etcd file
-    sed -e "s/^# NODE_NAME=$/NODE_NAME=$(hostname)/g" $DEFAULT_SOURCE > $TEMPFILE
+    sed -e "s/^# NODE_NAME=$/NODE_NAME=$(hostname)/ ; s/^# RUNNING_USER=$/RUNNING_USER=$USER/" $DEFAULT_SOURCE > $TEMPFILE
     ucf --three-way --debconf-ok $TEMPFILE $DEFAULT_TARGET
     chmod 644 $DEFAULT_TARGET
 
@@ -25,14 +27,18 @@ setup_etcd() {
     # Datadir
     install -d /opt/devops/var/etcd
     if ! dpkg-statoverride --list /opt/devops/var/etcd >/dev/null; then
-        chown -R devops:devops /opt/devops/var/etcd
+        chown -R $USER:$USER /opt/devops/var/etcd
         chmod 700 /opt/devops/var/etcd
     fi
 }
 
 case "$1" in
     configure|reconfigure)
-        adduser --quiet --shell /bin/bash --group --home /home/devops devops
+        if [ $(id -u $USER &> /dev/null) ]; then
+            echo "User $USER exists already..."
+        else
+            adduser --quiet --shell /bin/bash --group --home /home/$USER $USER
+        fi
         setup_etcd
     ;;
 esac

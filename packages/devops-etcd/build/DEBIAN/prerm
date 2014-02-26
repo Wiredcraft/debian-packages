@@ -5,6 +5,8 @@
 
 set -e
 
+USER=devops
+
 # summary of how this script can be called:
 #        * <prerm> `remove'
 #        * <old-prerm> `upgrade' <new-version>
@@ -20,11 +22,9 @@ case "$1" in
         # Use timestamp to make database restoring easier
         TIME=$(date +%Y-%m-%dT%H:%M:%S)
         BACKUPDIR=$(mktemp -d -p /var/backups/ devops-etcd-$TIME.XXXXXX)
-        chown devops:devops $BACKUPDIR
+        chown $USER:$USER $BACKUPDIR
         service devops-etcd stop
         cp -a /opt/devops/var/etcd $BACKUPDIR
-        # Change ownership to root:root because mongooseim user might be
-        # removed on package removal.
         chown -R root:root $BACKUPDIR
         chmod 700 $BACKUPDIR
         echo
