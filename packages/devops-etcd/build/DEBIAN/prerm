@@ -30,7 +30,6 @@ case "$1" in
         echo
         echo The devops-etcd database has been backed up to $BACKUPDIR.
         echo
-    fi
     ;;
 
     deconfigure)
